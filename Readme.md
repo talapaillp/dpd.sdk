@@ -181,7 +181,7 @@ $order->receiverComment = 'инструкция для курьера';
 ```
 
 После того как все параметры заказа заполнены, нужно вызвать метод `dpd`.
-Данные метод возвращает объект класса `Ipol\DPD\Order` позволяющий производить операции с заказом на стороне dpd,
+Данный метод возвращает объект класса `Ipol\DPD\Order` позволяющий производить операции с заказом на стороне dpd,
 в частности создание, отмену, запрос файла наклеек или накладной, проверка статуса и др.
 
 ```php
@@ -197,6 +197,7 @@ $result = $order->dpd()->create();
 $orderId = 1; // внешний ID заказа
 $order = \Ipol\DPD\DB\Connection::getInstance($config)->getTable('order')->getByOrderId($orderId);
 $order->dpd()->cancel();
+```
 
 ### Работа с местоположениями и терминалами
 При установке модуля и загрзуки первоначальных данных список городов и терминалов сохраняются во внутреннюю БД.
@@ -206,16 +207,25 @@ $order->dpd()->cancel();
 
 ```php
 
-$locations = \Ipol\DB\Connection::getInstance($config)->getTable('location');
-$terminals = \Ipol\DB\Connection::getInstance($config)->getTable('terminal');
-$order     = \Ipol\DB\Connection::getInstance($config)->getTable('order');
+$orderTable    = \Ipol\DB\Connection::getInstance($config)->getTable('order');
+$locationTable = \Ipol\DB\Connection::getInstance($config)->getTable('location');
+$terminalTable = \Ipol\DB\Connection::getInstance($config)->getTable('terminal');
 
 ```
 
-Во всех случаях будет возвращен объект класс которого реализует интерфейс `\Ipol\DPD\DB\TableInterface` помимо этого,
-в классе могут быть реализованы свои вспомогательные методы. Например у класса местоположений есть 
-метод `getByAddress($country, $region, $city, $select = '*')` который ищет местоположение в БД по текстовому 
+Во всех случаях будет возвращен объект класс которого реализует интерфейс `\Ipol\DPD\DB\TableInterface`. 
+Помимо этого, в классе могут быть реализованы свои вспомогательные методы. Например у класса местоположений есть 
+метод `getByAddress($country, $region, $city, $select = '*')` который ищет местоположение по текстовому 
 представлению.
+
+```php
+
+// получим терминалы принимающие наложенный платеж
+$items = $terminalTable->find([
+    'where' => 'NPP_AVAILABLE = "Y"',
+])->fetchAll();
+
+```
 
 ### Примеры
 В каталоге `examples/` приведены примеры использования модуля
