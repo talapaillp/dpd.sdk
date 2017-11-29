@@ -1,0 +1,221 @@
+<?php
+namespace Ipol\DPD\DB;
+
+abstract class AbstractTable implements TableInterface
+{
+    protected $connection;
+
+    public function __construct(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+    }
+
+    /**
+     * @return \Ipol\DPD\DB\ConnectionInterface
+     */
+    public function getConnection() 
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @return \Ipol\DPD\Config\ConfigInterface
+     */
+    public function getConfig()
+    {
+        return $this->getConnection()->getConfig();
+    }
+
+    /**
+     * @return \PDO
+     */
+    public function getPDO()
+    {
+        return $this->getConnection()->getPDO();
+    }
+
+    /**
+     * Возвращает имя класса модели
+     */
+    public function getModelClass()
+    {
+        return '\\Ipol\\DPD\\DB\\Model';
+    }
+
+    /**
+     * Создает модель
+     * 
+     * @return \Ipol\DPD\DB\Model
+     */
+    public function makeModel($id = false)
+    {
+        $classname = $this->getModelClass();
+
+        return new $classname($this, $id);
+    }
+
+    /**
+     * Создание таблицы при необходимости
+     */
+    public function checkTableSchema()
+	{
+        $sqlPath = sprintf('%s/db/install/%s/%s.sql',
+            $this->getConfig()->get('DATA_DIR'),
+            $this->getConnection()->getDriver(),
+            $this->getTableName()
+        );
+
+        if (file_exists($sqlPath)) {
+            $sql = file_get_contents($sqlPath);
+            $this->getPDO()->query($sql);
+        }
+	}
+
+	
+
+    /**
+     * Добавление записи
+     * 
+     * @param array $values
+     * 
+     * @return bool
+     */
+    public function add($values)
+    {
+        $fields       = array_keys($values);
+        $values       = $this->prepareParms($values);
+        $placeholders = array_keys($values);
+        
+        $sql = 'INSERT INTO '
+            . $this->getTableName() 
+            . ' ('. implode(',', $fields) .') VALUES ('
+            . implode(',', $placeholders) .')'
+        ;
+
+        return $this->getPDO()
+                    ->prepare($sql)
+                    ->execute($values)
+                ? $this->getPDO()->lastInsertId()
+                : false;
+    }
+
+    /**
+     * Обновление
+     * 
+     * @param int   $id
+     * @param array $values
+     * 
+     * @return bool
+     */
+    public function update($id, $values)
+    {
+        $fields       = array_keys($values);
+        $values       = $this->prepareParms($values);
+        $placeholders = array_keys($values);
+        
+        $sql = 'UPDATE '. $this->getTableName() .' SET ';
+        foreach ($fields as $i => $field) {
+            $sql .= $field .'='. $placeholders[$i] .',';
+        }
+        $sql = trim($sql, ',') . ' WHERE id = :id_where';
+
+        return $this->getPDO()
+                    ->prepare($sql)
+                    ->execute(array_merge(
+                        $values, 
+                        [':id_where' => $id]
+                    ));
+    }
+
+    /**
+     * Удаление записи
+     * 
+     * @param int $id
+     * 
+     * @return bool
+     */
+    public function delete($id)
+    {
+        $sql = 'DELETE FROM '. $this->getTableName .' WHERE id = :id';
+
+        return $this->getPDO()
+                    ->prepare($sql)
+                    ->execute([':id' => $id]);
+    }
+    
+    /**
+     * Выборка записей
+     * 
+     * $parms = "id = 1" or
+     * $parms = [
+     *  'select' => '*',
+     *  'where'  => 'id = :id',
+     *  'order'  => 'id asc',
+     *  'limit'  => '0,1',
+     *  'bind'   => [':id' => 1]
+     * ]
+     * 
+     * @param string|array $parms
+     * 
+     * @return \PDOStatement
+     */
+    public function find($parms = [])
+    {
+        $parms = is_array($parms)
+            ? $parms
+            : [
+                'where' => $parms,
+            ]
+        ;
+        
+        $sql = sprintf('SELECT %s FROM %s %s %s %s',
+            isset($parms['select'])     ? $parms['select']               : '*',
+            $this->getTableName(),
+            isset($parms['where'])      ? "WHERE {$parms['where']}" : '',
+            isset($parms['order'])      ? "ORDER BY {$parms['order']}"   : '',
+            isset($parms['limit'])      ? "LIMIT {$parms['limit']}"      : ''
+        );
+
+        $query = $this->getPDO()->prepare($sql);
+
+        return $query->execute($parms['bind'])
+            ? $query
+            : false
+        ;
+    }
+
+    /**
+     * Выборка одной записи, псевдномим над find limit 0,1
+     * 
+     * @param int|string|array $parms
+     * 
+     * @return array
+     */
+    public function findFirst($parms = [])
+    {
+        if (is_numeric($parms)) {
+            $parms = ['where' => 'id = :id', 'bind' => ['id' => $parms]];
+        } elseif (is_string($parms)) {
+            $parms = ['where' => $parms];
+        }
+
+        $parms['limit'] = '0,1';
+
+        return $this->find($parms)->fetch();
+    }
+
+    /**
+     * @param array $parms
+     * 
+     * @return array
+     */
+    protected function prepareParms($parms)
+    {
+        $ret = array();
+        foreach ($parms as $k => $v) {
+            $ret[':'. $k] = $v;
+        }
+
+        return $ret;
+    }
+}

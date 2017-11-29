@@ -1,0 +1,21 @@
+{
+    "name": "ipol/dpd",
+    "description": "",
+    "version": "1.0.0",
+    "license": "MIT",
+    "keywords": [
+        "dpd",
+        "dpd api",
+        "dpd soap"
+    ],
+    "require": {
+        "php": ">= 5.4"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Ipol\\DPD\\": "src/lib"
+        }
+    }
+}
