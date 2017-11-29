@@ -9,11 +9,11 @@ Client SDK - SDK для быстрой разработки клиентских
 * PDO-SQLite
 
 ### Установка
-Для установки скачайте [tar.gz](https://github.com) или [zip](https://github.com/), распакуйте его и подключите файл `autoload.php` в Вашем проекте. 
+Для установки скачайте [tar.gz](https://bitbucket.org/aikozlov/dpd.sdk/get/master.tar.gz) или [zip](https://bitbucket.org/aikozlov/dpd.sdk/get/master.zip), распакуйте его и подключите файл `autoload.php` в Вашем проекте. 
 
 ```php
 
-require_once 'path/to/database-master/src/autoload.php';
+require_once 'path/to/dpd.sdk/src/autoload.php';
 
 ```
 
