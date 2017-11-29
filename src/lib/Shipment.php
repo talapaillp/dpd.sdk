@@ -428,25 +428,15 @@ class Shipment
 
 		$isPaymentOnDelivery = is_null($isPaymentOnDelivery) ? $this->isPaymentOnDelivery() : $isPaymentOnDelivery;
 
-		$row = \Ipol\DPD\DB\Terminal\Table::getList([
-			'select' => array('CNT'),
+		$row = $this->getDB()->getTable('terminal')->findFirst([
+			'select' => 'count(*) as cnt',
+			'where'  => 'NPP_AVAILABLE = "Y" AND NPP_AMOUNT >= :amount',
+			'bind'   => [
+				':amount' => $this->getPrice(),
+			]
+		]);
 
-			'filter' => array_filter(array_merge(
-				[
-					'LOCATION_ID'   => $this->locationTo['ID'],
-				],
-
-				$isPaymentOnDelivery
-					? ['NPP_AVAILABLE' => 'Y', '>=NPP_AMOUNT'  => $this->getPrice()]
-					: []
-			)),
-
-			'runtime' => array(
-				new \Bitrix\Main\Entity\ExpressionField('CNT', 'COUNT(*)')
-			),
-		])->fetch();
-
-		return $row['CNT'] > 0;
+		return $row['cnt'] > 0;
 	}
 
 	/**
