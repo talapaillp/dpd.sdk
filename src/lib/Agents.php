@@ -27,21 +27,17 @@ class Agents
 	 */
 	protected static function checkPindingOrderStatus(ConfigInterface $config)
 	{
-		$orders = \Ipol\DPD\DB\Order\Table::getList(array(
-			'filter' => array(
-				'=ORDER_STATUS' => \Ipol\DPD\Order::STATUS_PENDING,
-			),
-
-			'order' => array(
-				'ORDER_DATE_STATUS' => 'ASC',
-				'ORDER_DATE_CREATE' => 'ASC',
-			),
-
-			'limit' => 2,
-		));
-
-		while($order = $orders->Fetch()) {
-			$order = new \Ipol\DPD\DB\Order\Model($order);
+		$table  = \Ipol\DPD\DB\Connection::getInstance($config)->getTable('order');
+		$orders = $table->find([
+			'where' => 'ORDER_STATUS = :order_status',
+			'order' => 'ORDER_DATE_STATUS ASC, ORDER_DATE_CREATE ASC',
+			'limit' => '0,2',
+			'bind'  => [
+				':order_status' => \Ipol\DPD\Order::STATUS_PENDING
+			]
+		])->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, $table->getModelClass(), $table);
+		
+		foreach ($orders as $order) {
 			$order->dpd()->checkStatus();
 		}
 	}
@@ -79,7 +75,7 @@ class Agents
 			});
 
 			foreach ($states as $state) {
-				$order = \Ipol\DPD\DB\Order\Table::findByOrder($state['CLIENT_ORDER_NR']);
+				$order = \Ipol\DPD\DB\Connection::getInstance($config)->getTable('order')->getByOrderId($state['CLIENT_ORDER_NR']);
 				if (!$order) {
 					continue;
 				}
@@ -111,35 +107,41 @@ class Agents
 	 */
 	public static function loadExternalData(ConfigInterface $config)
 	{
+		$api = API::getInstanceByConfig($config);
+
+		$locationTable  = \Ipol\DPD\DB\Connection::getInstance($config)->getTable('location');
+		$terminalTable  = \Ipol\DPD\DB\Connection::getInstance($config)->getTable('terminal');
+
+		$locationLoader = new \Ipol\DPD\DB\Location\Agent($api, $locationTable);
+		$terminalLoader = new \Ipol\DPD\DB\Terminal\Agent($api, $terminalTable);
+
 		$currStep = $config->get('LOAD_EXTERNAL_DATA_STEP');
 		$position = $config->get('LOAD_EXTERNAL_DATA_POSITION');
 
 		switch ($currStep) {
 			case 'LOAD_LOCATION_ALL':
-				$ret      = \Ipol\DPD\DB\Location\Agent::loadAll($position);
+				$ret      = $locationLoader->loadAll($position);
+				$currStep = 'LOAD_LOCATION_ALL';
 				$nextStep = 'LOAD_LOCATION_CASH_PAY';
 
-			break;
-
 			case 'LOAD_LOCATION_CASH_PAY':
-				$ret      = \Ipol\DPD\DB\Location\Agent::loadCashPay($position);
+				$ret      = $locationLoader->loadCashPay($position);
+				$currStep = 'LOAD_LOCATION_CASH_PAY';
 				$nextStep = 'LOAD_TERMINAL_UNLIMITED';
 
-			break;
-
 			case 'LOAD_TERMINAL_UNLIMITED':
-				$ret      = \Ipol\DPD\DB\Terminal\Agent::loadUnlimited($position);
+				$ret      = $terminalLoader->loadUnlimited($position);
+				$currStep = 'LOAD_TERMINAL_UNLIMITED';
 				$nextStep = 'LOAD_TERMINAL_LIMITED';
-			break;
 
 			case 'LOAD_TERMINAL_LIMITED':
-				$ret      = \Ipol\DPD\DB\Terminal\Agent::loadLimited($position);
+				$ret      = $terminalLoader->loadLimited($position);
+				$currStep = 'LOAD_TERMINAL_LIMITED';
 				$nextStep = 'LOAD_FINISH';
-
-			break;
 			
 			default:
 				$ret      = true;
+				$currStep = 'LOAD_FINISH';
 				$nextStep = 'LOAD_LOCATION_ALL';
 			break;
 		}
