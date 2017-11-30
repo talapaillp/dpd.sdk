@@ -69,20 +69,35 @@ class Order implements ServiceInterface
 	 * @param  string  $orderNum    Номер заказа DPD
 	 * @param  int     $parcelCount Количество мест в заказе
 	 * @param  double  $cargoValue  Сумма объявленной ценности, руб.
+	 * 
 	 * @return mixed 
 	 */
 	public function getInvoiceFile($orderNum, $parcelCount = false, $cargoValue = false)
 	{
-		$this->client->convertEncoding = false;
-
 		$ret = $this->client->invoke('getInvoiceFile', array_filter(array(
 			'orderNum'    => $orderNum,
 			'parcelCount' => $parcelCount,
 			'cargoValue'  => $cargoValue,
 		)), 'request');
 
-		$this->client->convertEncoding = true;
-
 		return $ret;
+	}
+
+	/**
+	 * @param string $datePickup   Дата приёма груза
+	 * @param string $regularNum   Номер регулярного заказа DPD
+	 * @param string $cityPickupId Идентификатор города приёма груза в системе DPD
+	 * @param string $addressCode  Код адреса в информационных системах заказчика и DPD
+	 * 
+	 * @return mixed
+	 */
+	public function getRegisterFile($datePickup, $regularNum = false, $cityPickupId = false, $addressCode = false)
+	{
+		return $this->client->invoke('getRegisterFile', array_filter(array(
+			'DATE_PICKUP'    => $datePickup,
+			'REGULAR_NUM'    => $regularNum,
+			'CITY_PICKUP_ID' => $cityPickupId,
+			'ADDRESS_CODE'   => $addressCode,
+		)), 'request');
 	}
 }

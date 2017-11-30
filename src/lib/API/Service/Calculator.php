@@ -43,6 +43,6 @@ class Calculator implements ServiceInterface
 	 */
 	public function getServiceCostInternational(array $parms)
 	{
-		return $this->client->invoke('getServiceCostInternational', $parms, $request);
+		return $this->client->invoke('getServiceCostInternational', $parms, 'request');
 	}
 }
