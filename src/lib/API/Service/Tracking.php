@@ -51,6 +51,6 @@ class Tracking implements ServiceInterface
 			'DATE_TO'       => $dateTo,
 			'DATE_FROM'     => $dateFrom,
 			'MAX_ROW_COUNT' => $limit,
-		)), 'request')
+		)), 'request');
 	}
 }
