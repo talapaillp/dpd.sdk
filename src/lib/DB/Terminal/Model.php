@@ -2,17 +2,22 @@
 namespace Ipol\DPD\DB\Terminal;
 
 use \Ipol\DPD\DB\Model as BaseModel;
+use Ipol\DPD\Shipment;
 
+/**
+ * Модель одной записи таблицы терминалов
+ */
 class Model extends BaseModel
 {
 	/**
-	 * Проверяет параметры посылки
+	 * Проверяет может ли терминал принять посылку
 	 * 
-	 * @param  Shipment $shipment
-	 * @param  boolean  $checkLocation
+	 * @param  \Ipol\DPD\Shipment $shipment
+	 * @param  bool               $checkLocation
+	 * 
 	 * @return bool
 	 */
-	public function checkShipment(\Ipol\DPD\Shipment $shipment, $checkLocation = true)
+	public function checkShipment(Shipment $shipment, $checkLocation = true)
 	{
 		if ($checkLocation 
 			&& !$this->checkLocation($shipment->getReceiver())
@@ -34,23 +39,25 @@ class Model extends BaseModel
 	}
 
 	/**
-	 * Проверяет местоположение терминала и переданного местоположения
+	 * Сверяет местоположение терминала и переданного местоположения
 	 * 
 	 * @param  array  $location
+	 * 
 	 * @return bool
 	 */
 	public function checkLocation(array $location)
 	{
-		return $this->fields['LOCATION_ID'] == $location['ID'];
+		return $this->fields['LOCATION_ID'] == $location['CITY_ID'];
 	}
 
 	/**
-	 * Возвращает возможность НПП на терминале
+	 * Проверяет возможность принять НПП на терминале
 	 * 
-	 * @param  Shipment $shipment
+	 * @param \Ipol\DPD\Shipment $shipment
+	 * 
 	 * @return bool
 	 */
-	public function checkShipmentPayment(\Ipol\DPD\Shipment $shipment)
+	public function checkShipmentPayment(Shipment $shipment)
 	{
 		if ($this->fields['NPP_AVAILABLE'] != 'Y')  {
 			return false;
@@ -60,12 +67,13 @@ class Model extends BaseModel
 	}
 
 	/**
-	 * Проверяет габариты посылки
+	 * Проверяет габариты посылки на возможность ее принятия на терминале
 	 * 
-	 * @param  Shipment $shipment
+	 * @param \Ipol\DPD\Shipment $shipment
+	 * 
 	 * @return bool
 	 */
-	public function checkShipmentDimessions(\Ipol\DPD\Shipment $shipment)
+	public function checkShipmentDimessions(Shipment $shipment)
 	{
 		if ($this->fields['IS_LIMITED'] != 'Y') {
 			return true;

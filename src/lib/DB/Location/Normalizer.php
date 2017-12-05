@@ -1,10 +1,19 @@
 <?php
 namespace Ipol\DPD\DB\Location;
 
-class Normilizer
+/**
+ * Класс обеспечивающий приведение различных адресов к единой форме
+ */
+class Normalizer
 {      
     /**
      * Возвращает нормализованную информацию о нас. пункте
+     * 
+     * @param string $country  Название страны
+     * @param string $region   Название региона
+     * @param string $locality Название населенного пункта
+     * 
+     * @return array
      */
     public function normilize($country, $region, $locality)
     {
@@ -17,6 +26,8 @@ class Normilizer
 
     /**
      * Возвращает информацию о стране
+     * 
+     * @param string $country  Название страны
      * 
      * @return array
      */
@@ -54,6 +65,8 @@ class Normilizer
      * 
      * @param string $city
      * @param array  $region
+     * 
+     * @return array
      */
     public function normilizeCity($city, $region)
     {
@@ -76,6 +89,8 @@ class Normilizer
      * 
      * @param string $city
      * @param array  $region
+     * 
+     * @return string
      */
     public function checkAnalog($city, $region)
     {
@@ -126,6 +141,8 @@ class Normilizer
     
     /**
      * Возвращает список стран
+     * 
+     * @return array
      */
     protected function getCountryList()
     {
@@ -138,6 +155,8 @@ class Normilizer
 
     /**
      * Возвращает аббревиатуру региона
+     * 
+     * @return array
      */
     protected function getRegionAbbrList()
     {
@@ -159,6 +178,8 @@ class Normilizer
      * 
      * @param string $region
      * @param string $countryCode
+     * 
+     * @return array
      */
     protected function getRegionCodeList($countryCode)
     {
@@ -173,6 +194,8 @@ class Normilizer
 
     /**
      * Возвращает аббревиатуру города
+     * 
+     * @return array
      */
     protected function getCityAbbrList()
     {
@@ -184,6 +207,8 @@ class Normilizer
 
     /**
      * Возвращает аббревиатуру нас. пункта
+     * 
+     * @return array
      */
     protected function getVillageAbbrList()
     {
@@ -208,6 +233,8 @@ class Normilizer
 
     /**
      * Возвращает список городов аналогов
+     * 
+     * @return array
      */
     protected function getCityAnalogs()
     {

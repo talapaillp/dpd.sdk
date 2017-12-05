@@ -1,14 +1,21 @@
 <?php
 namespace Ipol\DPD\DB;
 
+/**
+ * Интерфейс работы с таблицой БД
+ */
 interface TableInterface
 {
     /**
+     * Возвращает соединение ассоциированное с таблицей
+     * 
      * @return \Ipol\DPD\DB\ConnectionInterface
      */
     public function getConnection();
 
     /**
+     * Возвращает инстанс PDO
+     * 
      * @return \PDO
      */
     public function getPDO();
@@ -22,6 +29,8 @@ interface TableInterface
 
     /**
      * Возвращает имя класса модели
+     * 
+     * @return string
      */
     public function getModelClass();
 
@@ -45,7 +54,7 @@ interface TableInterface
     public function add($values);
 
     /**
-     * Обновление
+     * Обновление записи
      * 
      * @param int   $id
      * @param array $values
@@ -92,6 +101,8 @@ interface TableInterface
 
     /**
      * Проверка и создание таблицы по необходимости
+     * 
+     * @return void
      */
     public function checkTableSchema();
 }

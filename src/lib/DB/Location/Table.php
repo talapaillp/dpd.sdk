@@ -3,13 +3,26 @@ namespace Ipol\DPD\DB\Location;
 
 use Ipol\DPD\DB\AbstractTable;
 
+/**
+ * Класс для работы с таблицей местоположений
+ */
 class Table extends AbstractTable
 {
+	/**
+	 * Возвращает имя таблицы
+	 * 
+	 * @return string
+	 */
 	public function getTableName()
 	{
 		return 'b_ipol_dpd_location';
 	}
 
+	/**
+	 * Возвращает список полей и их значения по умолчанию
+	 * 
+	 * @return array
+	 */
 	public function getFields()
 	{
 		return [
@@ -26,9 +39,14 @@ class Table extends AbstractTable
 		];
 	}
 
-	public function getNormilizer()
+	/**
+	 * Возвращает normalizer адресов
+	 * 
+	 * @return \Ipol\DPD\DB\Location\Normalizer
+	 */
+	public function getNormalizer()
 	{
-		return new Normilizer();
+		return new Normalizer();
 	}
 
 	/**
@@ -36,6 +54,7 @@ class Table extends AbstractTable
 	 * 
 	 * @param  int $locationId
 	 * @param  array  $select
+	 * 
 	 * @return array|false
 	 */
 	public static function getByCityId($cityId, $select = '*')
@@ -49,6 +68,16 @@ class Table extends AbstractTable
 		]);
 	}
 
+	/**
+	 * Производит поиск города по текстовому названию в БД
+	 * 
+	 * @param string $country Название страны
+	 * @param string $region  Название региона
+	 * @param string $city    Название города
+	 * @param string $select  список полей которые необходимо выбрать
+	 * 
+	 * @return array
+	 */
 	public function getByAddress($country, $region, $city, $select = '*')
 	{
 		$city = $this->getNormilizer()->normilize($country, $region, $city);

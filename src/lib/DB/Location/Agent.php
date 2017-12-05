@@ -2,12 +2,13 @@
 namespace Ipol\DPD\DB\Location;
 
 use \Ipol\DPD\Config\ConfigInterface;
-
 use \Ipol\DPD\API\User\UserInterface;
 use \Ipol\DPD\DB\TableInterface;
 use \Ipol\DPD\Utils;
 
-
+/**
+ * Класс реализует методы обновления информации о городах в которых работает DPD
+ */
 class Agent
 {
 	protected static $cityFilePath = 'ftp://intergration:xYUX~7W98@ftp.dpd.ru:22/integration/GeographyDPD_20171125.csv';
@@ -15,6 +16,12 @@ class Agent
 	protected $api;
 	protected $table;
 
+	/**
+	 * Конструктор
+	 * 
+	 * @param \Ipol\DPD\User\UserInterface $api   инстанс API
+	 * @param \Ipol\DPD\DB\TableInterface  $table инстанс таблицы для записи данных в БД
+	 */
 	public function __construct(UserInterface $api, TableInterface $table)
 	{
 		$this->api   = $api;
@@ -38,15 +45,19 @@ class Agent
 	}
 
 	/**
+	 * Возвращает normalizer адресов
+	 * 
 	 * @return \Ipol\DPD\DB\Location\Normilizer
 	 */
-	public function getNormilizer()
+	public function getNormalizer()
 	{
-		return $this->getTable()->getNormilizer();
+		return $this->getTable()->getNormalizer();
 	}
 
 	/**
 	 * Обновляет список всех городов обслуживания
+	 * 
+	 * @param integer $position Стартовая позиция курсора в файле
 	 * 
 	 * @return void
 	 */
@@ -67,7 +78,7 @@ class Agent
 			}
 
 			$this->loadLocation(
-				$this->getNormilizer()->normilize(
+				$this->getNormalizer()->normilize(
 					$country    = $row[5],
 					$regionName = end(explode(',', $row[4])),
 					$cityName   = $row[2] .' '. $row[3]
@@ -85,6 +96,8 @@ class Agent
 
 	/**
 	 * Обновляет города в которых доступен НПП
+	 * 
+	 * @param string $position Стартовая позиция импорта
 	 * 
 	 * @return void
 	 */
@@ -113,7 +126,7 @@ class Agent
 				}
 
 				$this->loadLocation(
-					$this->getNormilizer()->normilize(
+					$this->getNormalizer()->normilize(
 						$country = $arCity['COUNTRY_NAME'],
 						$region  = $arCity['REGION_NAME'],
 						$city    = $arCity['ABBREVIATION'] .' '. $arCity['CITY_NAME']

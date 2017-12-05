@@ -1,16 +1,26 @@
 <?php
 namespace Ipol\DPD\DB;
 
+/**
+ * Абстрактный класс реализующий взаимодействие с одной таблицей
+ */
 abstract class AbstractTable implements TableInterface
 {
     protected $connection;
 
+    /**
+     * Конструктор класса
+     * 
+     * @param \Ipol\DPD\DB\ConnectionInterface
+     */
     public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
     }
 
     /**
+     * Возвращает соединение с БД
+     * 
      * @return \Ipol\DPD\DB\ConnectionInterface
      */
     public function getConnection() 
@@ -19,6 +29,8 @@ abstract class AbstractTable implements TableInterface
     }
 
     /**
+     * Возвращает конфиг
+     * 
      * @return \Ipol\DPD\Config\ConfigInterface
      */
     public function getConfig()
@@ -27,6 +39,8 @@ abstract class AbstractTable implements TableInterface
     }
 
     /**
+     * Возвращает инстанс PDO
+     * 
      * @return \PDO
      */
     public function getPDO()
@@ -36,14 +50,16 @@ abstract class AbstractTable implements TableInterface
 
     /**
      * Возвращает имя класса модели
+     * 
+     * @return array
      */
     public function getModelClass()
     {
-        return '\\Ipol\\DPD\\DB\\Model';
+        return \Ipol\DPD\DB\Model::class;
     }
 
     /**
-     * Создает модель
+     * Возвращает инстанс модели ассоциированной с таблицой
      * 
      * @return \Ipol\DPD\DB\Model
      */
@@ -56,6 +72,8 @@ abstract class AbstractTable implements TableInterface
 
     /**
      * Создание таблицы при необходимости
+     * 
+     * @return void
      */
     public function checkTableSchema()
 	{
@@ -100,7 +118,7 @@ abstract class AbstractTable implements TableInterface
     }
 
     /**
-     * Обновление
+     * Обновление записи
      * 
      * @param int   $id
      * @param array $values
@@ -205,6 +223,8 @@ abstract class AbstractTable implements TableInterface
     }
 
     /**
+     * Составляет массив bind-values для передачи в PDO
+     * 
      * @param array $parms
      * 
      * @return array

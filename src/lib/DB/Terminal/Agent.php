@@ -5,11 +5,16 @@ use \Ipol\DPD\API\User\UserInterface;
 use \Ipol\DPD\DB\TableInterface;
 use \Ipol\DPD\Utils;
 
+/**
+ * Класс реализует методы обновления информации о ПВЗ
+ */
 class Agent
 {
 	/**
-	 * @param UserInterface $api
-	 * @param TableInterface $table
+	 * Конструктор
+	 * 
+	 * @param \Ipol\DPD\API\User\UserInterface $api   инстанс API
+	 * @param \Ipol\DPD\DB\TableInterface      $table инстанс таблицы для записи данных в БД
 	 */
 	public function __construct(UserInterface $api, TableInterface $table)
 	{
@@ -34,6 +39,10 @@ class Agent
 	}
 
 	/**
+	 * Загружает терминалы без ограничений по габаритам
+	 * 
+	 * @param string $position Стартовая позиция импорта
+	 * 
 	 * @return bool|string
 	 */
 	public function loadUnlimited($position = 0)
@@ -59,6 +68,10 @@ class Agent
 	}
 
 	/**
+	 * Загружает терминалы с ограничениями по габаритам
+	 * 
+	 * @param string $position Стартовая позиция импорта
+	 * 
 	 * @return bool|string
 	 */
 	public function loadLimited($position = 'RU:0')
@@ -93,6 +106,10 @@ class Agent
 	}
 
 	/**
+	 * Сохраняет информацию о терминале в БД
+	 * 
+	 * @param array $item
+	 * 
 	 * @return bool|int
 	 */
 	protected function loadTerminal($item)
@@ -155,7 +172,9 @@ class Agent
 	/**
 	 * Возвращает адрес терминала в виде строки
 	 * 
-	 * @param  array  $address
+	 * @param array $address
+	 * @param bool  $short
+	 * 
 	 * @return string
 	 */
 	protected function normalizeAddress($address, $short = false)
@@ -196,8 +215,9 @@ class Agent
 	/**
 	 * Возвращает график работы терминала в виде строки
 	 * 
-	 * @param  array  $schedule  график работы
-	 * @param  string $operation операция для фильтрации
+	 * @param array  $schedule  график работы
+	 * @param string $operation операция для фильтрации
+	 * 
 	 * @return string
 	 */
 	protected function normalizeSchedule($schedule, $operation)
@@ -264,6 +284,13 @@ class Agent
 		return $ret;
 	}
 
+	/**
+	 * Возвращает макс. сумму наложенного платежа
+	 * 
+	 * @param array $item
+	 * 
+	 * @return double
+	 */
 	protected function getMaxNppAmount($item)
 	{
 		if (isset($item['EXTRA_SERVICE'])) {

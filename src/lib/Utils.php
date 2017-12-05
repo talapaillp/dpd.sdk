@@ -11,6 +11,7 @@ class Utils
 	 * 
 	 * @param  string  $string                   строка для преобразования
 	 * @param  boolean $capitalizeFirstCharacter первый символ строчный или прописной
+	 * 
 	 * @return string
 	 */
 	public static function underScoreToCamelCase($string, $capitalizeFirstCharacter = false)
@@ -37,6 +38,7 @@ class Utils
 	 * 
 	 * @param  string  $string    строка для преобразования
 	 * @param  boolean $uppercase
+	 * 
 	 * @return string
 	 */
 	public static function camelCaseToUnderScore($string, $uppercase = true)
@@ -62,6 +64,8 @@ class Utils
 	 * @param mixed $data
 	 * @param string $fromEncoding
 	 * @param string $toEncoding
+	 * 
+	 * @return mixed
 	 */
 	public static function convertEncoding($data, $fromEncoding, $toEncoding)
 	{
@@ -78,6 +82,10 @@ class Utils
 
 	/**
 	 * Вычисляет необходимость прерывания скрипта в долгих операциях
+	 * 
+	 * @param integer $start_time
+	 * 
+	 * @return bool
 	 */
 	public static function isNeedBreak($start_time)
 	{

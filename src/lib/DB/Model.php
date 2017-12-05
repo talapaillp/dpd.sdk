@@ -5,7 +5,7 @@ use \Bitrix\Main\SystemException;
 use \Ipol\DPD\Utils;
 
 /**
- * Абстрактный класс модели таблицы
+ * Класс модели таблицы
  * Каждый экземпляр класса - одна строка из таблицы
  *
  * К значениям полей можно обратиться двумя способами
@@ -54,6 +54,7 @@ class Model implements \ArrayAccess
 	 * Получает поля сущности из БД
 	 * 
 	 * @param  mixed $id ID или массив полей сущности
+	 * 
 	 * @return bool
 	 */
 	public function load($id)
@@ -79,6 +80,7 @@ class Model implements \ArrayAccess
 
 	/**
 	 * Вызывается после получения полей сущности из БД
+	 * 
 	 * @return void
 	 */
 	public function afterLoad()
@@ -181,6 +183,8 @@ class Model implements \ArrayAccess
 	 * Удаляет св-во сущности
 	 * 
 	 * @param string $prop
+	 * 
+	 * @return void
 	 */
 	public function __unset($prop)
 	{
@@ -191,6 +195,7 @@ class Model implements \ArrayAccess
 	 * Получает значение св-ва сущности
 	 * 
 	 * @param  string $prop
+	 * 
 	 * @return mixed
 	 */
 	public function __get($prop)
@@ -213,6 +218,8 @@ class Model implements \ArrayAccess
 	 * 
 	 * @param string $prop
 	 * @param mixed $value
+	 * 
+	 * @return void
 	 */
 	public function __set($prop, $value)
 	{
@@ -229,16 +236,31 @@ class Model implements \ArrayAccess
 		$this->fields[$prop] = $value;
 	}
 
+	/**
+	 * @param string $prop
+	 * 
+	 * @return bool
+	 */
 	public function offsetExists($prop)
 	{
 		return $this->__isset($prop);
 	}
 
+	/**
+	 * @param string $prop
+	 * 
+	 * @return void
+	 */
 	public function offsetUnset($prop)
 	{
 		throw new \Exception("Can\'t be removed property {$prop}");
 	}
 
+	/**
+	 * @param string $prop
+	 * 
+	 * @return mixed
+	 */
 	public function offsetGet($prop)
 	{
 		if (!$this->offsetExists($prop)) {
@@ -248,6 +270,11 @@ class Model implements \ArrayAccess
 		return $this->fields[$prop];
 	}
 
+	/**
+	 * @param string $prop
+	 * 
+	 * @return void
+	 */
 	public function offsetSet($prop, $value)
 	{
 		if (!$this->offsetExists($prop)) {

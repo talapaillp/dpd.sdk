@@ -3,18 +3,36 @@ namespace Ipol\DPD\DB\Order;
 
 use Ipol\DPD\DB\AbstractTable;
 
+/**
+ * Класс для работы с таблицей заказов
+ */
 class Table extends AbstractTable
 {
+	/**
+	 * Возвращает имя таблицы
+	 * 
+	 * @return string
+	 */
 	public function getTableName()
 	{
 		return 'b_ipol_dpd_order';
 	}
 
+	/**
+	 * Возвращает название класса модели
+	 * 
+	 * @return string
+	 */
 	public function getModelClass()
 	{
-		return '\\Ipol\\DPD\\DB\\Order\Model';
+		return \Ipol\DPD\DB\Order\Model::class;
 	}
 	
+	/**
+	 * Возвращает список полей и их значения по умолчанию
+	 * 
+	 * @return array
+	 */
 	public function getFields()
     {
 		return [
@@ -96,9 +114,11 @@ class Table extends AbstractTable
     }
 
 	/**
-	 * Возвращает одну запись по ID
+	 * Возвращает модель по ID
 	 * 
-	 * @param  $orderId
+	 * @param integer $orderId
+	 * @param bool    $autoCreate создавать пустую модель, если не найдена
+	 * 
 	 * @return \Ipol\DPD\DB\Order\Model
 	 */
 	public function getByOrderId($orderId, $autoCreate = false)

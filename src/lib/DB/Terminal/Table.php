@@ -3,13 +3,36 @@ namespace Ipol\DPD\DB\Terminal;
 
 use \Ipol\DPD\DB\AbstractTable;
 
+/**
+ * Класс для работы с таблицей терминалов
+ */
 class Table extends AbstractTable
 {
+	/**
+	 * Возвращает имя таблицы
+	 * 
+	 * @return string
+	 */
 	public function getTableName()
 	{
 		return 'b_ipol_dpd_terminal';
 	}
+	
+	/**
+	 * Возвращает название класса модели
+	 * 
+	 * @return string
+	 */
+	public function getModelClass()
+	{
+		return \Ipol\DPD\DB\Terminal\Model::class;
+	}
 
+	/**
+	 * Возвращает список полей и их значения по умолчанию
+	 * 
+	 * @return array
+	 */
 	public function getFields()
 	{
 		return [
@@ -41,11 +64,12 @@ class Table extends AbstractTable
 	}
 
 	/**
-	 * Возвращает записи по местоположению
+	 * Ищет терминалы по местоположению
 	 * 
 	 * @param  int $locationId
 	 * @param  array  $select
-	 * @return array|false
+	 * 
+	 * @return \PDOStatement
 	 */
 	public function findByLocationId($locationId, $select = '*')
 	{	
@@ -59,7 +83,9 @@ class Table extends AbstractTable
 	}
 
 	/**
-	 * Возвращает запись по коду
+	 * Возвращает запись о терминале по его коду
+	 * 
+	 * @return array
 	 */
 	public function getByCode($code, $select = '*')
 	{

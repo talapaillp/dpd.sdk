@@ -4,19 +4,30 @@ namespace Ipol\DPD\DB;
 use \PDO;
 use \Ipol\DPD\Config\ConfigInterface;
 
+/**
+ * Класс реализует соединения с БД и организует доступ к таблицами
+ */
 class Connection implements ConnectionInterface
 {
     protected static $instance;
     
+    /**
+     * @var array
+     */
     protected static $classmap = array(
         'location' => '\\Ipol\\DPD\\DB\\Location\\Table',
 		'terminal' => '\\Ipol\\DPD\\DB\\Terminal\\Table',
 		'order'    => '\\Ipol\\DPD\\DB\\Order\\Table',
     );
 
+    /**
+     * @var array
+     */
     protected $tables = array();
     
     /**
+     * Возвращает инстанс подключения
+     * 
      * @return \Ipol\DPD\DB\ConnectionInterface
      */
     public static function getInstance(ConfigInterface $config)
@@ -25,7 +36,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Constructor
+     * Конструктор класса
      * 
      * @param   string  $dsn        The DSN string
      * @param   string  $username   (optional) Username
@@ -48,7 +59,9 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * @return ConfigInterface
+     * Возвращает конфиг
+     * 
+     * @return \Ipol\DPD\Config\ConfigInterface
      */
     public function getConfig()
     {
@@ -81,7 +94,7 @@ class Connection implements ConnectionInterface
     /**
      * Returns the PDO object associated with this connection
      *
-     * @return PDO
+     * @return \PDO
      */
     public function getPDO()
     {
@@ -96,6 +109,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Возвращает маппер для таблицы
+     * 
+     * @param string $tableName имя маппера/таблицы
      * 
      * @return \Ipol\DPD\DB\TableInterface
      */

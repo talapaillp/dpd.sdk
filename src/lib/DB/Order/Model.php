@@ -5,6 +5,9 @@ use \Ipol\DPD\Order as DpdOrder;
 use \Ipol\DPD\DB\Model as BaseModel;
 use \Ipol\DPD\Shipment;
 
+/**
+ * Модель одной записи таблицы заказов
+ */
 class Model extends BaseModel
 {
 	const SERVICE_VARIANT_D = 'Д';
@@ -18,6 +21,8 @@ class Model extends BaseModel
 
 	/**
 	 * Возвращает список статусов и их описаний
+	 * 
+	 * @return array
 	 */
 	public static function StatusList()
 	{
@@ -46,7 +51,7 @@ class Model extends BaseModel
 	/**
 	 * Возвращает отправку
 	 *
-	 * @param bool $forced
+	 * @param bool $forced true - создает новый инстанс на основе полей записи
 	 * 
 	 * @return \Ipol\DPD\Shipment
 	 */
@@ -75,7 +80,12 @@ class Model extends BaseModel
 	}
 
 	/**
+	 * Ассоциирует внешнюю отправку с записью
+	 * Происходит заполнение полей записи на основе данных отправки
+	 * 
 	 * @param \Ipol\DPD\Shipment $shipment
+	 * 
+	 * @return self
 	 */
 	public function setShipment(Shipment $shipment)
 	{
@@ -95,17 +105,25 @@ class Model extends BaseModel
 			'SELF_PICKUP'   => $shipment->getSelfPickup(),
 			'SELF_DELIVERY' => $shipment->getSelfDelivery(),
 		];
+
+		return $this;
 	}
 
 	/**
+	 * Сеттер св-ва ORDER_ITEMS
+	 * 
 	 * @param array $items
 	 */
 	public function setOrderItems($items)
 	{
 		$this->fields['ORDER_ITEMS'] = \serialize($items);
+
+		return $this;
 	}
 
 	/**
+	 * Геттер св-ва ORDER_ITEMS
+	 * 
 	 * @return array
 	 */
 	public function getOrderItems()
@@ -114,18 +132,26 @@ class Model extends BaseModel
 	}
 
 	/**
+	 * Сеттер св-ва NPP
+	 * 
 	 * @param float $npp
+	 * 
+	 * @return self
 	 */
 	public function setNpp($npp)
 	{
 		$this->fields['NPP']     = $npp;
 		$this->fields['SUM_NPP'] = $npp == 'Y' ? $this->price : 0;
+
+		return $this;
 	}
 
 	/**
 	 * Устанавливает вариант доставки
 	 *
 	 * @param string $variant
+	 * 
+	 * @return self
 	 */
 	public function setServiceVariant($variant)
 	{
@@ -163,12 +189,22 @@ class Model extends BaseModel
 		);
 	}
 
+	/**
+	 * Возвращает флаг доставка от ТЕРМИНАЛА или ДВЕРИ
+	 * 
+	 * @return bool
+	 */
 	public function isSelfPickup()
 	{
 		$serviceVariant = $this->getServiceVariant();
 		return $serviceVariant['SELF_PICKUP'];
 	}
 
+	/**
+	 * Возвращает флаг доставка до ТЕРМИНАЛА или ДВЕРИ
+	 * 
+	 * @return bool
+	 */
 	public function isSelfDelivery()
 	{
 		$serviceVariant = $this->getServiceVariant();
@@ -195,9 +231,9 @@ class Model extends BaseModel
 	/**
 	 * Возвращает ифнормацию о тарифе
 	 *
-	 * @param  boolean $forced пересоздать ли экземпляр отгрузки
+	 * @param  bool $forced пересоздать ли экземпляр отгрузки
 	 *
-	 * @return \Ipol\DPD\Result
+	 * @return array
 	 */
 	public function getTariffDelivery($forced = false)
 	{
@@ -224,15 +260,24 @@ class Model extends BaseModel
 	 * Сеттер для номера заказа, попутно устанавливаем номер отправления
 	 *
 	 * @param $orderNum
+	 * 
+	 * @return self
 	 */
 	public function setOrderNum($orderNum)
 	{
 		$this->fields['ORDER_NUM']         = $orderNum;
 		$this->fields['ORDER_DATE_CREATE'] = $orderNum ? date('Y-m-d H:i:s') : null;
+
+		return $this;
 	}
 
 	/**
 	 * Сеттер для статуса заказа
+	 * 
+	 * @param $orderStatus
+	 * @param $orderStatusDate
+	 * 
+	 * @return self
 	 */
 	public function setOrderStatus($orderStatus, $orderStatusDate = false)
 	{
@@ -253,7 +298,9 @@ class Model extends BaseModel
 	}
 
 	/**
-	 * @return boolean
+	 * Возвращает флаг новый заказ
+	 * 
+	 * @return bool
 	 */
 	public function isNew()
 	{
@@ -263,7 +310,7 @@ class Model extends BaseModel
 	/**
 	 * Проверяет отправлялся ли заказ в DPD
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isCreated()
 	{
@@ -274,7 +321,7 @@ class Model extends BaseModel
 	/**
 	 * Проверяет отправлялся ли заказ в DPD и был ли он там успешно создан
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isDpdCreated()
 	{
