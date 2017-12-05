@@ -5,6 +5,10 @@ use \Ipol\DPD\API\User\User;
 use \Ipol\DPD\Config\ConfigInterface;
 use \Ipol\DPD\DB\Connection as DB;
 
+/**
+ * Класс для работы с отправкой
+ * Позволяет настроить параметры отправки
+ */
 class Shipment
 {
 	protected $config;
@@ -28,6 +32,8 @@ class Shipment
 
 	/**
 	 * Конструктор класса
+	 * 
+	 * @param \Ipol\DPD\Config\ConfigInterface $config
 	 */
 	public function __construct(ConfigInterface $config)
 	{
@@ -39,6 +45,10 @@ class Shipment
 
 	/**
 	 * Устанавливает конфиг для работы
+	 * 
+	 * @param \Ipol\DPD\Config\ConfigInterface $config
+	 * 
+	 * @return self
 	 */
 	public function setConfig(ConfigInterface $config)
 	{
@@ -49,12 +59,19 @@ class Shipment
 
 	/**
 	 * Возвращает конфиг
+	 * 
+	 * @return \Ipol\DPD\Config\ConfigInterface
 	 */
 	public function getConfig()
 	{
 		return $this->config;
 	}
 
+	/**
+	 * Возвращает инстанс для работы с БД
+	 * 
+	 * @return \Ipol\DPD\DB\ConnectionInterface
+	 */
 	public function getDB()
 	{
 		return DB::getInstance($this->config);
@@ -155,7 +172,7 @@ class Shipment
 	}
 
 	/**
-	 * Устанавливает док куда будут забирать посылку
+	 * Устанавливает до чего будут доставлять посылку
 	 * true  - до терминала
 	 * false - до двери
 	 * 
@@ -169,7 +186,7 @@ class Shipment
 	}
 
 	/**
-	 * Возвращает флаг до куда будут забирать посылку
+	 * Возвращает флаг до чего будут доставлять посылку
 	 * 
 	 * @return bool
 	 */
@@ -221,7 +238,7 @@ class Shipment
 	 * ]
 	 * 
 	 * @param array   $items             список товаров
-	 * @param integer $itemsPrice        сумма наложенного платежа
+	 * @param integer $itemsPrice        стоимость товаров входящих в отправку
 	 * @param array   $defaultDimensions массив с габаритами по умолчанию
 	 */
 	public function setItems($items, $itemsPrice = 0, $defaultDimensions = array())
@@ -416,8 +433,10 @@ class Shipment
 	}
 
 	/**
-	 * Проверяет возможность осуществления в терминал доставки
+	 * Проверяет возможность осуществления доставки до ПВЗ
 	 *
+	 * @param bool $isPaymentOnDelivery будет ли использоваться наложенный платеж
+	 * 
 	 * @return  bool
 	 */
 	public function isPossibileSelfDelivery($isPaymentOnDelivery = null)
@@ -426,21 +445,34 @@ class Shipment
 			return false;
 		}
 
-		$isPaymentOnDelivery = is_null($isPaymentOnDelivery) ? $this->isPaymentOnDelivery() : $isPaymentOnDelivery;
+		$isPaymentOnDelivery = is_null($isPaymentOnDelivery) ? $this->isPaymentOnDelivery(): $isPaymentOnDelivery;
+		$locationTo          = $this->getReceiver();
 
-		$row = $this->getDB()->getTable('terminal')->findFirst([
-			'select' => 'count(*) as cnt',
-			'where'  => 'NPP_AVAILABLE = "Y" AND NPP_AMOUNT >= :amount',
-			'bind'   => [
-				':amount' => $this->getPrice(),
-			]
-		]);
+		if ($isPaymentOnDelivery) {
+			$row = $this->getDB()->getTable('terminal')->findFirst([
+				'select' => 'count(*) as cnt',
+				'where'  => 'NPP_AVAILABLE = "Y" AND NPP_AMOUNT >= :amount AND LOCATION_ID = :location_id',
+				'bind'   => [
+					':amount'      => $this->getPrice(),
+					':location_id' => $locationTo['CITY_ID'],
+				]
+			]);
+		} else {
+			$row = $this->getDB()->getTable('terminal')->findFirst([
+				'select' => 'count(*) as cnt',
+				'where'  => 'LOCATION_ID = :location_id',
+				'bind'   => [
+					':location_id' => $locationTo['CITY_ID'],
+				]
+			]);
+		}
 
 		return $row['cnt'] > 0;
 	}
 
 	/**
-	 * Использовать ли наложенный платеж
+	 * Проверяет будет ли использован наложенный платеж
+	 * Проверка происходит на основе данных указаных в конфиге, поля COMMISSION_NPP_*
 	 * 
 	 * @return bool
 	 */
@@ -476,7 +508,7 @@ class Shipment
 	/**
 	 * Возвращает калькулятор для расчета стоимости доставки посылки
 	 * 
-	 * @param User $api
+	 * @param \Ipol\DPD\API\User\UserInterface $api
 	 * 
 	 * @return \Ipol\DPD\Calculator
 	 */
@@ -486,11 +518,12 @@ class Shipment
 	}
 
 	/**
-	 * Возвращает суммарный вес и объем товаров в заказе
+	 * Вычисляет суммарный вес и объем товаров в заказе
 	 * 
-	 * @param  array $items             состав заказа
-	 * @param  array $defaultDimensions значения по умолчанию, если не переданы беруться из настроек модуля
-	 * @return array(weight, volume)
+	 * @param  array $items             список товаров
+	 * @param  array $defaultDimensions габариты по умолчанию, если не переданы беруться из настроек модуля
+	 * 
+	 * @return array
 	 */
 	protected function calcShipmentDimensions(&$items, $defaultDimensions = array())
 	{
@@ -553,7 +586,7 @@ class Shipment
 	}
 
 	/**
-	 * Расчитывает габариты с учетом кол-ва
+	 * Суммирует габариты товара с учетом его кол-ва
 	 * 
 	 * @param  $width
 	 * @param  $height
@@ -607,7 +640,7 @@ class Shipment
 	/**
 	 * Расчитывает суммарные габариты посылки
 	 * 
-	 * @param  array $items [description]
+	 * @param  array $items список товаров
 	 * @return array
 	 */
 	protected function sumDimensions($items)

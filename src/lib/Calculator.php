@@ -5,6 +5,9 @@ use \Ipol\DPD\API\User\User as API;
 use \Ipol\DPD\API\User\UserInterface;
 use \Ipol\DPD\Currency\ConverterInterface;
 
+/**
+ * Класс калькулятор стоимости доставки
+ */
 class Calculator
 {
 	protected static $lastResult = false;
@@ -16,7 +19,7 @@ class Calculator
 	protected $currencyConverter;
 
 	/**
-	 * Возвращает список всех тарифов которые могут быть использованы
+	 * Возвращает список поддерживаемых тарифов
 	 *
 	 * @return array
 	 */
@@ -36,7 +39,7 @@ class Calculator
 	}
 
 	/**
-	 * Возвращает список тарифов которые можно использовать
+	 * Возвращает список тарифов которые будут использованы в расчете
 	 *
 	 * @return array
 	 */
@@ -56,6 +59,13 @@ class Calculator
 		return static::$lastResult;
 	}
 
+	/**
+	 * Конструктор
+	 * 
+	 * @param \Ipol\DPD\Shipment               $shipment  отправление
+	 * @param \Ipol\DPD\API\User\UserInterface $api       инстанс API который будет использован в расчете,
+	 *                                                    по умолчанию будет взят из конфига
+	 */
 	public function __construct(Shipment $shipment, UserInterface $api = null)
 	{
 		$this->shipment                  = $shipment;
@@ -74,6 +84,10 @@ class Calculator
 
 	/**
 	 * Устанавливает конвертер валюты
+	 * 
+	 * @param \Ipol\DPD\Currency\ConverterInterface $converter
+	 * 
+	 * @return self
 	 */
 	public function setCurrencyConverter(ConverterInterface $converter)
 	{
@@ -84,6 +98,8 @@ class Calculator
 
 	/**
 	 * Возвращает конвертер валюты
+	 * 
+	 * @return \Ipol\DPD\Currency\ConverterInterface $converter
 	 */
 	public function getCurrencyConverter()
 	{
@@ -95,6 +111,8 @@ class Calculator
 	 * Устанавливает посылку для расчета стоимости
 	 * 
 	 * @param \Ipol\DPD\Shipment $shipment
+	 * 
+	 * @return self
 	 */
 	public function setShipment(Shipment $shipment)
 	{
@@ -119,11 +137,15 @@ class Calculator
 	 * 
 	 * @param string  $tariffCode
 	 * @param float   $minCostWhichUsedTariff
+	 * 
+	 * @return self
 	 */
 	public function setDefaultTariff($tariffCode, $minCostWhichUsedTariff = 0)
 	{
 		$this->defaultTariffCode = $tariffCode;
 		$this->minCostWhichUsedDefTariff = $minCostWhichUsedTariff;
+
+		return $this;
 	}
 
 	/**
@@ -148,9 +170,18 @@ class Calculator
 	}
 
 	/**
-	 * Расчитывает стоимость доставки
+	 * Расчитывает стоимость доставки.
 	 * 
-	 * @return array Оптимальный тариф доставки
+	 * Возвращает оптимальный тариф доставки (минимальный по цене для клиента)
+	 * 
+	 * При передачи параметра $currency и установки конвертера, стоимость будет
+	 * автоматически сконвертирована в переданную валюту
+	 * 
+	 * @see setCurrencyConverter
+	 * 
+	 * @param string $currency валюта
+	 * 
+	 * @return array
 	 */
 	public function calculate($currency = false)
 	{
@@ -173,8 +204,13 @@ class Calculator
 	}
 
 	/**
-	 * Возвращает стоимость доставки для конкретного тарифа
-	 * @param  string $tariffCode
+	 * Расчитывает стоимость доставки с помощью конкретного тарифа
+	 * 
+	 * Возвращает стоимость доставки c помощью указанного тарифа
+	 * 
+	 * @param  string $tariffCode код тарифа
+	 * @param  string $currency   валюта
+	 * 
 	 * @return array
 	 */
 	public function calculateWithTariff($tariffCode, $currency = false)
@@ -208,6 +244,7 @@ class Calculator
 	 * @param  array $tariff
 	 * @param  int   $personTypeId
 	 * @param  int   $paySystemId
+	 * 
 	 * @return array
 	 */
 	public function adjustTariffWithCommission($tariff)
@@ -233,7 +270,7 @@ class Calculator
 	}
 
 	/**
-	 * Возвращает параметры для запроса на основе данных отправки
+	 * Возвращает параметры для передачи в API
 	 * 
 	 * @return array
 	 */
@@ -251,10 +288,12 @@ class Calculator
 	}
 
 	/**
-	 * Получает список тарифов у внешнего сервиса
-	 * с учетом разрешенных тарифов
+	 * Выполняет расчет через API
 	 * 
-	 * @param  array $parms
+	 * Возвращает список тарифов и их стоимость с учетом используемых тарифов
+	 *  
+	 * @param  array $parms массив параметров для расчета
+	 * 
 	 * @return array
 	 */
 	public function getListFromService($parms)
@@ -264,9 +303,10 @@ class Calculator
 	}
 
 	/**
-	 * Возвращает актуальный тариф с учетом мин. тарифа по умолчанию
+	 * Ищет оптимальный тариф среди списка
 	 * 
 	 * @param  array $tariffs
+	 * 
 	 * @return array
 	 */
 	protected function getActualTariff(array $tariffs)

@@ -4,8 +4,14 @@ namespace Ipol\DPD\API\User;
 use \Ipol\DPD\Config\ConfigInterface;
 use \Ipol\DPD\Config\Config;
 
+/**
+ * Класс реализует доступ к метода API
+ */
 class User implements UserInterface
 {
+	/**
+	 * @var array
+	 */
 	public static $classmap = array(
 		'geography'   => '\\Ipol\\DPD\\API\\Service\\Geography',
 		'calculator'  => '\\Ipol\\DPD\\API\\Service\\Calculator',
@@ -14,8 +20,14 @@ class User implements UserInterface
 		'tracking'    => '\\Ipol\\DPD\\API\\Service\\Tracking',
 	);
 
+	/**
+	 * @var self
+	 */
 	protected static $instances = [];
 
+	/**
+	 * @var array
+	 */
 	protected $services = [];
 
 	/**
@@ -35,6 +47,13 @@ class User implements UserInterface
 		return $clientNumber && $clientKey;
 	}
 	
+	/**
+	 * Возвращает инстанс класса по псевдониму
+	 * 
+	 * @param string $alias
+	 * 
+	 * @return \Ipol\DPD\User\UserInterface
+	 */
 	public static function getInstanceByAlias($alias)
 	{
 		if (isset(static::$instances[$alias])) {
@@ -47,7 +66,7 @@ class User implements UserInterface
     /**
 	 * Возвращает инстанс класса с параметрами доступа указанными в настройках
 	 * 
-	 * @return 
+	 * @return \Ipol\DPD\User\UserInterface
 	 */
 	public static function getInstanceByConfig(ConfigInterface $config, $account = false)
 	{
@@ -73,11 +92,11 @@ class User implements UserInterface
 	protected $currency;
 
 	/**
-	 * @param string  $clientNumber
-	 * @param string  $secretKey
-	 * @param boolean $testMode
-	 * @param string  $currency
-	 * @param string  $alias
+	 * @param string  $clientNumber номер клиента
+	 * @param string  $secretKey    ключ доступа к API
+	 * @param boolean $testMode     тестовый режим
+	 * @param string  $currency     используемая валюта в API
+	 * @param string  $alias        псевдоним под которым зарегистрируется текущий инстанс
 	 */
 	public function __construct($clientNumber, $secretKey, $testMode = false, $currency = false, $alias = false)
 	{
@@ -93,7 +112,7 @@ class User implements UserInterface
 	/**
 	 * Возвращает номер клиента DPD
 	 * 
-	 * @return mixed
+	 * @return string
 	 */
 	public function getClientNumber()
 	{
@@ -103,7 +122,7 @@ class User implements UserInterface
 	/**
 	 * Возвращает токен авторизации DPD
 	 * 
-	 * @return mixed
+	 * @return string
 	 */
 	public function getSecretKey()
 	{
@@ -131,9 +150,10 @@ class User implements UserInterface
 	}
 
 	/**
-	 * Возвращает службу для доступа к API
+	 * Возвращает конкретную службу API
 	 * 
-	 * @param  string $serviceName
+	 * @param  string $serviceName имя службы
+	 * 
 	 * @return \Ipol\API\Service\ServiceInterface
 	 */
 	public function getService($serviceName)
@@ -145,6 +165,13 @@ class User implements UserInterface
 		throw new \Exception("Service {$serviceName} not found");
 	}
 
+	/**
+	 * Конвертирует переданный uri в соответствии с тестовым режимом
+	 * 
+	 * @param string $uri
+	 * 
+	 * @return string
+	 */
 	public function resolveWsdl($uri)
 	{
 		if ($this->testMode) {

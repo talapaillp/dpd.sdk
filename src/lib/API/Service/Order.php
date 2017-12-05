@@ -4,10 +4,18 @@ namespace Ipol\DPD\API\Service;
 use \Ipol\DPD\API\User\UserInterface;
 use \Ipol\DPD\API\Client\Factory as ClientFactory;
 
+/**
+ * Служба по работе с заказом
+ */
 class Order implements ServiceInterface
 {
 	protected $wdsl = 'http://ws.dpd.ru/services/order2?wsdl';
 
+	/**
+     * Конструктор класса
+     * 
+     * @param \Ipol\DPD\API\User\UserInterface
+     */
 	public function __construct(UserInterface $user)
 	{
 		$this->client = ClientFactory::create($this->wdsl, $user);
@@ -18,6 +26,7 @@ class Order implements ServiceInterface
 	 * Создает заказ в системе DPD
 	 * 
 	 * @param  array $parms
+	 * 
 	 * @return array
 	 */
 	public function createOrder($parms)
@@ -28,9 +37,9 @@ class Order implements ServiceInterface
 	/**
 	 * Отменяет заказ
 	 * 
-	 * @param  $internalNumber
-	 * @param  $externalNumber
-	 * @param  boolean $pickupDate
+	 * @param  integer $internalNumber     Внутренний номер заказа
+	 * @param  integer $externalNumber     Номер заказа DPD
+	 * @param  string  $pickupDate         Дата приёма груза
 	 * 
 	 * @return array
 	 */
@@ -48,7 +57,9 @@ class Order implements ServiceInterface
 	/**
 	 * Проверяет статус заказа
 	 * 
-	 * @param  array $parms
+	 * @param integer $internalNumber
+	 * @param string  $pickupDate
+	 * 
 	 * @return array
 	 */
 	public function getOrderStatus($internalNumber, $pickupDate = false)

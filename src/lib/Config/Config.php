@@ -1,6 +1,9 @@
 <?php
 namespace Ipol\DPD\Config;
 
+/**
+ * Класс конфиг по умолчанию
+ */
 class Config implements ConfigInterface
 {
     protected $options = [
@@ -92,11 +95,24 @@ class Config implements ConfigInterface
         'COMMISSION_NPP_DEFAULT' => [],
     ];
 
+    /**
+     * Конструктор
+     * 
+     * @params array $parms массив опция для переопределения
+     */
     public function __construct($parms = [])
     {
         $this->init($parms);
     }
 
+    /**
+     * Получение значения опции
+     * 
+     * @param string $option       Название опции
+     * @param mixed  $defaultValue Значение по умолчанию, если опция не определена
+     * 
+     * @return mixed
+     */
     public function get($option, $defaultValue = null)
     {
         if (isset($this->options[$option])) {
@@ -106,11 +122,28 @@ class Config implements ConfigInterface
         return $defaultValue;
     }
 
+    /**
+     * Запись значения опции
+     * 
+     * @param string $option Название опции
+     * @param mixed  $value  Значение опции
+     * 
+     * @return self
+     */
     public function set($option, $value)
     {
         $this->options[$option] = $value;
+
+        return $this;
     }
 
+    /**
+     * Вызывается после создания объекта
+     * 
+     * @param array $parms массив опций для переопределения
+     * 
+     * @return void
+     */
     protected function init($parms = [])
     {
         $this->options = array_merge($this->options, $parms);

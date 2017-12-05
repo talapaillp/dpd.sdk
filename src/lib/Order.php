@@ -9,7 +9,7 @@ use \Ipol\DPD\Currency\ConverterInterface;
 use \Ipol\DPD\DB\Connection as DB;
 
 /**
- * Класс для работы с заказом во внешней службе DPD
+ * Класс для работы со внешним заказом DPD
  */
 class Order
 {
@@ -109,10 +109,13 @@ class Order
 	protected $model;
 
 	/**
-	 * @var \Ipol\DPD\API\User\User
+	 * @var \Ipol\DPD\API\User\UserInterface
 	 */
 	protected $api;
 
+	/**
+	 * @var \Ipol\DPD\Currency\ConverterInterface
+	 */
 	protected $currencyConverter;
 
 	/**

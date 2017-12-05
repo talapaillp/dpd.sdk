@@ -1,6 +1,9 @@
 <?php
 namespace Ipol\DPD;
 
+/**
+ * Класс результата
+ */
 class Result
 {
 	/** @var bool */

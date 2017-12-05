@@ -1,6 +1,9 @@
 <?php
 use \Ipol\DPD\Currency;
 
+/**
+ * Интерфейс конвертера валют
+ */
 interface ConverterInterface
 {
     /**

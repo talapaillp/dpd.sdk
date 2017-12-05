@@ -1,6 +1,9 @@
 <?php
 namespace Ipol\DPD;
 
+/**
+ * Класс содержит вспомогательные методы для работы с модулем
+ */
 class Utils
 {
 	/**
@@ -72,59 +75,6 @@ class Utils
 
 		return $data;
 	}
-
-	/**
-	 * Возвращает свойства заказа для типа платильщика
-	 * 
-	 * @param  int $personeTypeId
-	 * @return array
-	 */
-	// public static function getOrderProps($personeTypeId)
-	// {
-	// 	$rsProps = \CSaleOrderProps::GetList(
-	// 		$arOrder  = array('SORT' => 'ASC'),
-	// 		$arFilter = array('PERSON_TYPE_ID' => $personeTypeId)
-	// 	);
-
-	// 	$result = array();
-	// 	while($arProp = $rsProps->Fetch()) {
-	// 		$result[] = $arProp;
-	// 	}
-
-	// 	return $result;
-	// }
-
-	/**
-	 * Возвращает значение св-в заказа
-	 * 
-	 * @param  int $orderId
-	 * @param  int $personeTypeId
-	 * @return array
-	 */
-	// public static function getOrderPropsValue($orderId, $personeTypeId = false)
-	// {}
-
-	/**
-	 * Конвертирует дату из bitrix формата в DPD
-	 * 
-	 * @param string $date
-	 * @return string
-	 */
-	// public static function DateBitrixToDpd($date)
-	// {
-	// 	return ConvertDateTime($date, "YYYY-MM-DD", "ru");
-	// }
-	
-	/**
-	 * Конвертирует дату из DPD формата в bitrix
-	 * 
-	 * @param string $date
-	 * @return string
-	 */
-	// public static function DateDpdToBitrix($date)
-	// {
-	// 	return ConvertDateTime($date, "DD.MM.YYYY", "ru");
-	// }
 
 	/**
 	 * Вычисляет необходимость прерывания скрипта в долгих операциях

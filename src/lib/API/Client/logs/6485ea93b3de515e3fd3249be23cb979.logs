@@ -1,8 +1,0 @@
-LOCATION: 
-http://wstest.dpd.ru:80/services/order2
-REQUEST : 
-<?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://dpd.ru/ws/order2/2012-04-04"><SOAP-ENV:Body><ns1:cancelOrder><orders><auth><clientNumber>1001027795</clientNumber><clientKey>182A17BD6FC5557D1FCA30FA1D56593EB21AEF88</clientKey></auth><cancel><orderNumberInternal>1</orderNumberInternal><orderNum>RU000648541</orderNum><pickupdate>2017-12-02</pickupdate></cancel></orders></ns1:cancelOrder></SOAP-ENV:Body></SOAP-ENV:Envelope>
-
-ANSWER  : 
-<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/"><S:Body><ns2:cancelOrderResponse xmlns:ns2="http://dpd.ru/ws/order2/2012-04-04"><return><orderNumberInternal>1</orderNumberInternal><orderNum>RU000648541</orderNum><status>Canceled</status></return></ns2:cancelOrderResponse></S:Body></S:Envelope>

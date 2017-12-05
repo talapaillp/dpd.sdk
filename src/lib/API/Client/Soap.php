@@ -4,6 +4,9 @@ namespace Ipol\DPD\API\Client;
 use \Ipol\DPD\API\User\UserInterface;
 use \Ipol\DPD\Utils;
 
+/**
+ * Реализация SOAP клиента для работы с API
+ */
 class Soap extends \SoapClient implements ClientInterface
 {
 	/**
@@ -25,9 +28,9 @@ class Soap extends \SoapClient implements ClientInterface
 	/**
 	 * Конструктор класса
 	 * 
-	 * @param string $wsdl
-	 * @param User   $user
-	 * @param array  $options
+	 * @param string                           $wsdl     адрес SOAP-api
+	 * @param \Ipol\DPD\API\User\UserInterface $user     инстанс подключения к API    
+	 * @param array                            $options  опции для SOAP
 	 */
 	public function __construct($wsdl, UserInterface $user, array $options = array())
 	{
@@ -54,21 +57,26 @@ class Soap extends \SoapClient implements ClientInterface
 
 	/**
 	 * Устанавливает время жизни кэша
+	 * 
 	 * @param int $cacheTime
+	 * 
+	 * @return self
 	 */
 	public function setCacheTime($cacheTime)
 	{
 		$this->cache_time = $cacheTime;
+
+		return $this;
 	}
 
 	/**
 	 * Выполняет запрос к внешнему API
-	 *
-	 * TODO: в качестве возвращаемого результата использовать \Bitrix\Main\Result
 	 * 
-	 * @param  string $method
-	 * @param  array  $args
-	 * @param  string $wrap
+	 * @param  string $method выполняемый метод API
+	 * @param  array  $args   параметры для передачи
+	 * @param  string $wrap   название эл-та обертки
+	 * @param  string $keys
+	 * 
 	 * @return mixed
 	 */
 	public function invoke($method, array $args = array(), $wrap = 'request', $keys = false)
@@ -106,7 +114,7 @@ class Soap extends \SoapClient implements ClientInterface
 	 */
 	protected function cache()
 	{
-		return $this->cache ?: $this->cache = Cache::createInstance();
+		return null;
 	}
 
 	/**
@@ -114,9 +122,9 @@ class Soap extends \SoapClient implements ClientInterface
 	 *
 	 * Под конвертацией понимается:
 	 * - перевод названий параметров в camelCase
-	 * - смена кодировки при необходимости
 	 * 
 	 * @param  array $data 
+	 * 
 	 * @return array
 	 */
 	protected function convertDataForService($data)
@@ -133,6 +141,16 @@ class Soap extends \SoapClient implements ClientInterface
 		return $ret;
 	}
 
+	/**
+	 * Конвертирует полученные данные в формат модуля
+	 * 
+	 * Под конвертацией понимается:
+	 * - перевод названий параметров в UNDER_SCORE
+	 * 
+	 * @param  array $data 
+	 * 
+	 * @return array
+	 */
 	protected function convertDataFromService($data, $keys = false)
 	{
 		$keys = $keys ? array_flip((array) $keys) : false;
@@ -151,20 +169,20 @@ class Soap extends \SoapClient implements ClientInterface
 		return $ret;
 	}
 
-	public function __doRequest($request, $location, $action, $version, $one_way = 0)
-	{
-		$ret = parent::__doRequest($request, $location, $action, $version, $one_way);
+	// public function __doRequest($request, $location, $action, $version, $one_way = 0)
+	// {
+	// 	$ret = parent::__doRequest($request, $location, $action, $version, $one_way);
 
-		if (!is_dir(__DIR__ .'/logs/')) {
-			mkdir(__DIR__ .'/logs/', 0777);
-		}
+	// 	if (!is_dir(__DIR__ .'/logs/')) {
+	// 		mkdir(__DIR__ .'/logs/', 0777);
+	// 	}
 
-		file_put_contents(__DIR__ .'/logs/'. md5($location) .'.logs', ''
-			. 'LOCATION: '. PHP_EOL . $location . PHP_EOL
-			. 'REQUEST : '. PHP_EOL . $request  . PHP_EOL
-			. 'ANSWER  : '. PHP_EOL . $ret      . PHP_EOL
-		);
+	// 	file_put_contents(__DIR__ .'/logs/'. md5($location) .'.logs', ''
+	// 		. 'LOCATION: '. PHP_EOL . $location . PHP_EOL
+	// 		. 'REQUEST : '. PHP_EOL . $request  . PHP_EOL
+	// 		. 'ANSWER  : '. PHP_EOL . $ret      . PHP_EOL
+	// 	);
 
-		return $ret;	
-	}
+	// 	return $ret;	
+	// }	
 }

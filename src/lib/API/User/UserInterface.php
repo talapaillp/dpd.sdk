@@ -1,6 +1,9 @@
 <?php
 namespace Ipol\DPD\API\User;
 
+/**
+ * Интерфейс соединения с API
+ */
 interface UserInterface
 {
     /**

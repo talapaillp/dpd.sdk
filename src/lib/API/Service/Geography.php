@@ -4,12 +4,20 @@ namespace Ipol\DPD\API\Service;
 use \Ipol\DPD\API\User\UserInterface;
 use \Ipol\DPD\API\Client\Factory as ClientFactory;
 
+/**
+ * Служба по работе с географическими данными
+ */
 class Geography implements ServiceInterface
 {
 	protected $wdsl = 'http://ws.dpd.ru/services/geography2?wsdl';
 
 	protected $clientOld;
 
+	/**
+     * Конструктор класса
+     * 
+     * @param \Ipol\DPD\API\User\UserInterface
+     */
 	public function __construct(UserInterface $user)
 	{
 		// По не известным причинам данный сервис в тестовом режиме
@@ -21,7 +29,9 @@ class Geography implements ServiceInterface
 	}
 
 	/**
-	 * Возвращает список городов с возможностью доставки с наложенным платежом
+	 * Возвращает список городов с возможностью доставки наложенным платежом
+	 * 
+	 * @param string $countryCode код страны
 	 * 
 	 * @return array
 	 */
@@ -36,6 +46,11 @@ class Geography implements ServiceInterface
 	 * Возвращает список пунктов приема/выдачи посылок, имеющих ограничения по габаритам и весу, 
 	 * с указанием режима работы пункта и доступностью выполнения самопривоза/самовывоза.
 	 * При работе с  методом  необходимо проводить получение информации по списку подразделений ежедневно.
+	 * 
+	 * @param string $countryCode код страны
+	 * @param string $regionCode  код региона
+	 * @param string $cityCode    код города
+	 * @param string $cityName    название города
 	 * 
 	 * @return array
 	 */
@@ -66,9 +81,12 @@ class Geography implements ServiceInterface
 	/**
 	 * Возвращает информацию о сроке бесплатного хранения на пункте
 	 *
+	 * @param array $terminalCodes
+	 * @param array $serviceCode
+	 * 
 	 * @return array
 	 */
-	public function getStoragePeriod(array $terminalCоdes = array(), array $serviceCode = array())
+	public function getStoragePeriod(array $terminalCodes = array(), array $serviceCode = array())
 	{
 		return $this->client->invoke('getStoragePeriod', array_filter(array(
 			'terminalCоdes' => implode(',', $terminalCоdes),

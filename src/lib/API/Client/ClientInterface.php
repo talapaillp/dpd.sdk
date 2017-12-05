@@ -1,6 +1,9 @@
 <?php
 namespace Ipol\DPD\API\Client;
 
+/**
+ * Интерфейс подключения к API
+ */
 interface ClientInterface
 {
 	/**

@@ -5,14 +5,22 @@ use \Ipol\DPD\API\User as API;
 use \Ipol\DPD\Config\ConfigInterface;
 
 /**
- * Класс периодических заданий
+ * Класс содержит набор готовых методов реализующих выполнение периодических
+ * заданий
  */
 class Agents
 {
 	/**
-	 * Проверяет статусы заказов
+	 * Обновляет статусы заказов
 	 * 
-	 * @return string
+	 * Обновление статусов происходит в 2 этапа.
+	 * На первом этапе обрабатываются заказы, которые создались в статусе "Ожидают проверки менеджером DPD"
+	 * На втором этапе обрабатываются остальные заказы. Для получения изменений по статусам используется 
+	 * метод getStatesByClient
+	 * 
+	 * @param \Ipol\DPD\Config\ConfigInterface $config
+	 * 
+	 * @return void
 	 */
 	public static function checkOrderStatus(ConfigInterface $config)
 	{
@@ -103,6 +111,8 @@ class Agents
 	/**
 	 * Загружает в локальную БД данные о местоположениях и терминалах
 	 * 
+	 * @param \Ipol\DPD\Config\ConfigInterface $config
+	 * 
 	 * @return string
 	 */
 	public static function loadExternalData(ConfigInterface $config)
@@ -124,20 +134,36 @@ class Agents
 				$currStep = 'LOAD_LOCATION_ALL';
 				$nextStep = 'LOAD_LOCATION_CASH_PAY';
 
+				if ($ret !== true) {
+					break;
+				}
+
 			case 'LOAD_LOCATION_CASH_PAY':
 				$ret      = $locationLoader->loadCashPay($position);
 				$currStep = 'LOAD_LOCATION_CASH_PAY';
 				$nextStep = 'LOAD_TERMINAL_UNLIMITED';
+
+				if ($ret !== true) {
+					break;
+				}
 
 			case 'LOAD_TERMINAL_UNLIMITED':
 				$ret      = $terminalLoader->loadUnlimited($position);
 				$currStep = 'LOAD_TERMINAL_UNLIMITED';
 				$nextStep = 'LOAD_TERMINAL_LIMITED';
 
+				if ($ret !== true) {
+					break;
+				}
+
 			case 'LOAD_TERMINAL_LIMITED':
 				$ret      = $terminalLoader->loadLimited($position);
 				$currStep = 'LOAD_TERMINAL_LIMITED';
 				$nextStep = 'LOAD_FINISH';
+
+				if ($ret !== true) {
+					break;
+				}
 			
 			default:
 				$ret      = true;

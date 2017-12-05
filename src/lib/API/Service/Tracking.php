@@ -4,10 +4,18 @@ namespace Ipol\DPD\API\Service;
 use \Ipol\DPD\API\User\UserInterface;
 use \Ipol\DPD\API\Client\Factory as ClientFactory;
 
+/**
+ * Служба для работы со статусами заказа
+ */
 class Tracking implements ServiceInterface
 {
 	protected $wdsl = 'http://ws.dpd.ru/services/tracing?wsdl';
 
+	/**
+     * Конструктор класса
+     * 
+     * @param \Ipol\DPD\API\User\UserInterface
+     */
 	public function __construct(User $user)
 	{
 		$this->client = ClientFactory::create($this->wdsl, $user);
