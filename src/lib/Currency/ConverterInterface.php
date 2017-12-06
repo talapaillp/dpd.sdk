@@ -1,5 +1,5 @@
 <?php
-use \Ipol\DPD\Currency;
+namespace Ipol\DPD\Currency;
 
 /**
  * Интерфейс конвертера валют

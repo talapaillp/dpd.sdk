@@ -176,7 +176,9 @@ class Shipment
 	 * true  - до терминала
 	 * false - до двери
 	 * 
-	 * @param bool $selfPickup
+	 * @param bool $selfDelivery
+	 * 
+	 * @return bool
 	 */
 	public function setSelfDelivery($selfDelivery)
 	{
