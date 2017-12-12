@@ -80,7 +80,7 @@ class Table extends AbstractTable
 	 */
 	public function getByAddress($country, $region, $city, $select = '*')
 	{
-		$city = $this->getNormilizer()->normilize($country, $region, $city);
+		$city = $this->getNormalizer()->normilize($country, $region, $city);
 		
 		return $this->findFirst([
 			'select' => $select,
