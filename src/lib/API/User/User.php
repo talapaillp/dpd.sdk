@@ -13,11 +13,12 @@ class User implements UserInterface
 	 * @var array
 	 */
 	public static $classmap = array(
-		'geography'   => '\\Ipol\\DPD\\API\\Service\\Geography',
-		'calculator'  => '\\Ipol\\DPD\\API\\Service\\Calculator',
-		'order'       => '\\Ipol\\DPD\\API\\Service\\Order',
-		'label-print' => '\\Ipol\\DPD\\API\\Service\\LabelPrint',
-		'tracking'    => '\\Ipol\\DPD\\API\\Service\\Tracking',
+		'geography'      => '\\Ipol\\DPD\\API\\Service\\Geography',
+		'calculator'     => '\\Ipol\\DPD\\API\\Service\\Calculator',
+		'order'          => '\\Ipol\\DPD\\API\\Service\\Order',
+		'label-print'    => '\\Ipol\\DPD\\API\\Service\\LabelPrint',
+		'tracking'       => '\\Ipol\\DPD\\API\\Service\\Tracking',
+		'event-tracking' => '\\Ipol\\DPD\\API\\Service\\EventTracking',
 	);
 
 	/**
