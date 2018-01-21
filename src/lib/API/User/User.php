@@ -14,6 +14,7 @@ class User implements UserInterface
 	 */
 	public static $classmap = array(
 		'geography'      => '\\Ipol\\DPD\\API\\Service\\Geography',
+		'geography_old'  => '\\Ipol\\DPD\\API\\Service\\GeographyOld',
 		'calculator'     => '\\Ipol\\DPD\\API\\Service\\Calculator',
 		'order'          => '\\Ipol\\DPD\\API\\Service\\Order',
 		'label-print'    => '\\Ipol\\DPD\\API\\Service\\LabelPrint',
