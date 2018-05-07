@@ -19,6 +19,7 @@ class User implements UserInterface
 		'order'          => '\\Ipol\\DPD\\API\\Service\\Order',
 		'label-print'    => '\\Ipol\\DPD\\API\\Service\\LabelPrint',
 		'tracking'       => '\\Ipol\\DPD\\API\\Service\\Tracking',
+		'tracking-order' => '\\Ipol\\DPD\\API\\Service\\TrackingOrder',
 		'event-tracking' => '\\Ipol\\DPD\\API\\Service\\EventTracking',
 	);
 

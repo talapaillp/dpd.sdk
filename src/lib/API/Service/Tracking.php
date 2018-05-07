@@ -16,7 +16,7 @@ class Tracking implements ServiceInterface
      * 
      * @param \Ipol\DPD\API\User\UserInterface
      */
-	public function __construct(User $user)
+	public function __construct(UserInterface $user)
 	{
 		$this->client = ClientFactory::create($this->wdsl, $user);
 		$this->client->setCacheTime(0);

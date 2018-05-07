@@ -11,7 +11,18 @@ class EventTracking implements ServiceInterface
 {
 	protected $wdsl = 'http://ws.dpd.ru/services/event-tracking?wsdl';
 
-    /**
+	/**
+     * Конструктор класса
+     * 
+     * @param \Ipol\DPD\API\User\UserInterface
+     */
+	public function __construct(UserInterface $user)
+	{
+		$this->client = ClientFactory::create($this->wdsl, $user);
+		$this->client->setCacheTime(0);
+	}
+
+	/**
 	 * Подтверждает получение статусов
 	 * 
 	 * @param  $docId
