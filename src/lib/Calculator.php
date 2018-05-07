@@ -203,6 +203,29 @@ class Calculator
 		return self::$lastResult = $tariff;
 	}
 
+	public function calculateAll($currency = false)
+	{
+		if (!$this->getShipment()->isPossibileDelivery()) {
+			return false;
+		}
+
+		$parms = $this->getServiceParmsArray();
+		$tariffs = $this->getListFromService($parms);
+
+		if (empty($tariffs)) {
+			return false;
+		}
+
+		foreach ($tariffs as $k => $tariff) {
+			$tariff = $this->adjustTariffWithCommission($tariff);
+			$tariff = $this->convertCurrency($tariff, $currency);
+
+			$tariffs[$k] = $tariff;
+		}
+
+		return $tariffs;
+	}
+
 	/**
 	 * Расчитывает стоимость доставки с помощью конкретного тарифа
 	 * 
