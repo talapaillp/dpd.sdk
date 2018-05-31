@@ -273,6 +273,16 @@ class Shipment
 	}
 
 	/**
+	 * Устанавливает стоимость товаров входящих в отправку
+	 * 
+	 * @return float
+	 */
+	public function setPrice($price)
+	{
+		return $this->orderItemsPrice = $price;
+	}
+
+	/**
 	 * Возвращает габариты посылки
 	 * 
 	 * @return array

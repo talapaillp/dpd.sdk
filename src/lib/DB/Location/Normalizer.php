@@ -74,10 +74,9 @@ class Normalizer
             $this->getCityAbbrList(),
             $this->getVillageAbbrList()
         ));
-        
 
         $city = $this->checkAnalog($city, $region);
-        
+
         return [
             'CITY_NAME' => $city,
             'CITY_ABBR' => $abbr,
@@ -128,7 +127,8 @@ class Normalizer
 
             if (preg_match($abbrRegexp, $string)) {
                 $string = preg_replace($abbrRegexp, '', $string);
-                $string = trim($string, '.');
+
+                $string = trim($string, ' .');
                 $string = preg_replace('{\s{2,}}', ' ', $string);
                 $string = trim($string);
 
@@ -219,7 +219,7 @@ class Normalizer
             'деревня',
             'д',
             'село',
-            'c',
+            'с',
             'поселок',
             'посёлок',
             'п',

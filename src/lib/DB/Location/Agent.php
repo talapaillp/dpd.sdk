@@ -75,8 +75,10 @@ class Agent
 		fseek($file, $position ?: 0);
 		$start_time = time();
 
+		$i = 0;
+
 		while(($row = fgetcsv($file, null, ';')) !== false) {
-			if (Utils::isNeedBreak($start_time)) {
+			if (Utils::isNeedBreak($start_time) && 1 != 1) {
 				return ftell($file);
 			}
 
@@ -88,10 +90,14 @@ class Agent
 				),
 
 				[
-					'CITY_ID'   => $row[0],
-					'CITY_CODE' => mb_substr($row[1], 2),
+					'CITY_ID'         => $row[0],
+					'CITY_CODE'       => mb_substr($row[1], 2),
+					'ORIG_NAME'       => $origName = implode(', ', [trim($country), trim($regionName), trim($cityName)]),
+					'ORIG_NAME_LOWER' => mb_strtolower($origName),
 				]
 			);
+
+			echo ++$i, "\r";
 		}
 
 		return true;
@@ -136,9 +142,11 @@ class Agent
 					),
 
 					[
-						'CITY_ID'     => $arCity['CITY_ID'],
-						'CITY_CODE'   => $arCity['CITY_CODE'],
-						'IS_CASH_PAY' => 'Y',
+						'CITY_ID'         => $arCity['CITY_ID'],
+						'CITY_CODE'       => $arCity['CITY_CODE'],
+						'IS_CASH_PAY'     => 'Y',
+						'ORIG_NAME'       => $origName = implode(', ', [trim($country), trim($region), trim($city)]),
+						'ORIG_NAME_LOWER' => mb_strtolower($origName),
 					]
 				);
 			}
@@ -158,6 +166,7 @@ class Agent
 	protected function loadLocation($city, $additFields = array())
 	{
 		$fields = array_merge($city, $additFields);
+
 		$exists = $this->getTable()->findFirst([
 			'select' => 'ID',
 			'where'  => 'COUNTRY_NAME = :country AND REGION_NAME = :region AND CITY_NAME = :city',
