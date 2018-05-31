@@ -63,7 +63,10 @@ class Agent
 	 */
 	public function loadAll($position = 0)
 	{
+		ini_set('auto_detect_line_endings', true);
+
 		static::$cityFilePath = $this->getTable()->getConfig()->get('DATA_DIR') .'/cities.csv';
+
 		$file = fopen(self::$cityFilePath, 'r');
 		if ($file === false) {
 			return false;
