@@ -69,9 +69,9 @@ $order->senderFio = 'ФИО отправителя';
 $order->senderPhone = 'Телефон отправителя';
 $order->senderTerminalCode = '009M';
 
-$order->receiverName = 'Наименование отправителя';
-$order->receiverFio = 'ФИО отправителя';
-$order->receiverPhone = 'Телефон отправителя';
+$order->receiverName = 'Наименование получателя';
+$order->receiverFio = 'ФИО получателя';
+$order->receiverPhone = 'Телефон получателя';
 $order->receiverTerminalCode = '012K';
 
 $order->pickupDate = '2017-12-02';
