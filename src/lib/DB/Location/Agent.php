@@ -82,10 +82,12 @@ class Agent
 				return ftell($file);
 			}
 
+			$region = explode(',', $row[4]);
+
 			$this->loadLocation(
 				$this->getNormalizer()->normilize(
 					$country    = $row[5],
-					$regionName = end(explode(',', $row[4])),
+					$regionName = end($region),
 					$cityName   = $row[2] .' '. $row[3]
 				),
 
