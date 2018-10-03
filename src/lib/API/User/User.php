@@ -162,7 +162,11 @@ class User implements UserInterface
 	public function getService($serviceName)
 	{
 		if (isset(static::$classmap[$serviceName])) {
-			return $this->services[$serviceName] ?: $this->services[$serviceName] = new static::$classmap[$serviceName]($this);
+			if (isset($this->services[$serviceName])) {
+				return $this->services[$serviceName];
+			}
+
+			return $this->services[$serviceName] = new static::$classmap[$serviceName]($this);
 		}
 
 		throw new \Exception("Service {$serviceName} not found");
