@@ -171,11 +171,9 @@ class Agent
 
 		$exists = $this->getTable()->findFirst([
 			'select' => 'ID',
-			'where'  => 'COUNTRY_NAME = :country AND REGION_NAME = :region AND CITY_NAME = :city',
+			'where'  => 'CITY_ID = :city_id',
 			'bind'   => [
-				'country' => $fields['COUNTRY_NAME'],
-				'region'  => $fields['REGION_NAME'],
-				'city'    => $fields['CITY_NAME']
+				'city_id' => $additFields['CITY_ID'],
 			]
 		]);
 
