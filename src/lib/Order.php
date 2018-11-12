@@ -243,7 +243,7 @@ class Order
 				throw new \Exception($error);
 			}
 
-			$this->model->orderNum = $ret['ORDER_NUM'] ?: '';
+			$this->model->orderNum = isset($ret['ORDER_NUM']) ? $ret['ORDER_NUM'] : '';
 			$this->model->orderStatus = $ret['STATUS'];
 
 			$result = $this->model->save();

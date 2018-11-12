@@ -61,7 +61,7 @@ class Agent
 	 * 
 	 * @return void
 	 */
-	public function loadAll($position = 0)
+	public function loadAll($position = 0, $country_name = 'Казахстан')
 	{
 		ini_set('auto_detect_line_endings', true);
 
@@ -84,22 +84,22 @@ class Agent
 
 			$region = explode(',', $row[4]);
 
-			$this->loadLocation(
-				$this->getNormalizer()->normilize(
-					$country    = $row[5],
-					$regionName = end($region),
-					$cityName   = $row[2] .' '. $row[3]
-				),
-
-				[
-					'CITY_ID'         => $row[0],
-					'CITY_CODE'       => mb_substr($row[1], 2),
-					'ORIG_NAME'       => $origName = implode(', ', [trim($country), trim($regionName), trim($cityName)]),
-					'ORIG_NAME_LOWER' => mb_strtolower($origName),
-				]
-			);
-
-			echo ++$i, "\r";
+			if($row[5] == $country_name) {
+				$this->loadLocation(
+					$this->getNormalizer()->normilize(
+						$country    = $row[5],
+						$regionName = end($region),
+						$cityName   = $row[2] .' '. $row[3]
+					),
+ 
+					[
+						'CITY_ID'         => $row[0],
+						'CITY_CODE'       => mb_substr($row[1], 2),
+						'ORIG_NAME'       => $origName = implode(', ', [trim($country), trim($regionName), trim($cityName)]),
+						'ORIG_NAME_LOWER' => mb_strtolower($origName),
+					]
+				);
+			}
 		}
 
 		return true;
