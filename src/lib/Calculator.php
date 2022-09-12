@@ -47,7 +47,7 @@ class Calculator
 	public function AllowedTariffList()
 	{
 		$disableTariffs = (array) $this->getConfig()->get('TARIFF_OFF');
-		return array_diff_key(static::TariffList(), array_flip($disableTariffs));
+		return array_diff_key(static::TariffList(), $disableTariffs);
 	}
 
 	/**
